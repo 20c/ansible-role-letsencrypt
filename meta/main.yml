@@ -1,0 +1,34 @@
+galaxy_info:
+  author: Matt Griswold
+  description: An Ansible role that creates or renews a cert with https://letsencrypt.org/ and optionally installs it to servers.
+  company: 20C
+  license: Apache
+  min_ansible_version: 1.9
+  platforms:
+  - name: EL
+    versions:
+    - all
+  - name: GenericUNIX
+    versions:
+    - all
+    - any
+  - name: Fedora
+    versions:
+    - all
+  - name: opensuse
+    versions:
+    - all
+  - name: Ubuntu
+    versions:
+    - all
+  - name: GenericLinux
+    versions:
+    - all
+    - any
+  - name: Debian
+    versions:
+    - all
+  categories:
+  - system
+  - web
+dependencies: []

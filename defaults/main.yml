@@ -1,0 +1,23 @@
+
+# will use this @$domain for email address, overridable per domain
+letsencrypt_email_user: root
+# create cert locally for later sync
+letsencrypt_local: True
+letsencrypt_local_port: 7010
+# always push certs to server
+letsencrypt_force_install: True
+# letsencrypt_install_dir: directory to install to on server
+#letsencrypt_certs:
+#  - domain: example.net
+# optional:
+#    sans: [www.example.net, example.com, www.example.com]
+#    email: admin@example.net
+letsencrypt_command: letsencrypt
+letsencrypt_server: https://acme-v01.api.letsencrypt.org/directory
+letsencrypt_dir: letsencrypt
+letsencrypt_config_dir: "{{letsencrypt_dir}}/config"
+letsencrypt_work_dir: "{{letsencrypt_dir}}/tmp"
+letsencrypt_logs_dir: "{{letsencrypt_dir}}/log"
+# in seconds, default is 2 weeks
+letsencrypt_renew_at: 1209600
+letsencrypt_cert_file: fullchain.pem

@@ -1,0 +1,57 @@
+
+- name: check for valid cert
+  local_action: shell openssl x509 -checkend {{letsencrypt_renew_at}} -noout -in {{letsencrypt_config_dir}}/live/{{item.domain}}/{{letsencrypt_cert_file}}
+  register: letsencrypt_update
+  with_items: letsencrypt_certs
+  ignore_errors: True
+  failed_when: False
+  changed_when: "letsencrypt_update.rc != 0"
+  always_run: yes
+
+#- debug: var=letsencrypt_update
+
+- name: create or renew letsencrypt cert
+  local_action: shell {{letsencrypt_command}}
+    --text
+    --agree-dev-preview
+    --agree-tos
+    --standalone
+    --renew-by-default
+    -d {{item.item.domain}}
+    {% if item.item.sans %}-d {{ item.item.sans | join(' -d ') }}{% endif %}
+    --config-dir={{letsencrypt_config_dir}}
+    --work-dir={{letsencrypt_work_dir}}
+    --logs-dir={{letsencrypt_logs_dir}}
+    --email={{item.item.email | default(letsencrypt_email_user + '@' + item.item.domain)}}
+    --server={{letsencrypt_server}}
+    --standalone-supported-challenges=http-01
+    --http-01-port={{letsencrypt_local_port}}
+    certonly
+  with_items: letsencrypt_update.results
+  when: item.changed
+  tags:
+    - letsencrypt
+
+# tls-sni-01
+# --tls-sni-01-port={{letsencrypt_local_port}}
+
+- name: fix cert permissions
+  local_action: shell chmod 0400 {{letsencrypt_config_dir}}/live/{{item.item.domain}}/*.pem
+  with_items: letsencrypt_update.results
+  when: (item.changed or letsencrypt_force_install)
+  tags:
+    - letsencrypt
+
+- name: push certs to server
+  synchronize: src={{letsencrypt_config_dir}}/live/{{item.item.domain}}
+    dest={{letsencrypt_install_dir}}
+    owner=no
+    group=no
+    perms=yes
+    copy_links=yes
+  with_items: letsencrypt_update.results
+  when: (item.changed or letsencrypt_force_install) and
+    letsencrypt_install_dir is defined
+  tags:
+    - letsencrypt
+
