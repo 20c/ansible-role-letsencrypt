@@ -1,5 +1,5 @@
 
-# letsencrypt
+# Ansible Role for letsencrypt
 
 An Ansible role that creates or renews a cert with https://letsencrypt.org/ and optionally installs it to servers. Does not require root, or installation of any software on the remote host.
 
@@ -38,20 +38,26 @@ If you want it to install the certs you must set `letsencrypt_install_dir`.
     letsencrypt_install_dir: /srv/certs/
 
 Default variables
-    # if set, will use this @$domain for email address, overridable per domain
+
+    # will use this @$domain for email address, overridable per domain
     letsencrypt_email_user: root
+
     # create cert locally for later sync
     letsencrypt_local: True
+
     # local port
     letsencrypt_local_port: 7010
+
     # always push certs to server
     letsencrypt_force_install: True
+
     letsencrypt_server: https://acme-v01.api.letsencrypt.org/directory
     letsencrypt_command: letsencrypt
     letsencrypt_dir: letsencrypt
     letsencrypt_config_dir: "{{letsencrypt_dir}}/config"
     letsencrypt_work_dir: "{{letsencrypt_dir}}/tmp"
     letsencrypt_logs_dir: "{{letsencrypt_dir}}/log"
+
     # renew the cert when expiration is within this number of seconds, default is 2 weeks
     letsencrypt_renew_at: 1209600
     letsencrypt_cert_file: fullchain.pem
