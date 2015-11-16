@@ -1,7 +1,7 @@
 
 # Ansible Role for letsencrypt
 
-An Ansible role that creates or renews a cert with https://letsencrypt.org/ and optionally installs it to servers. Does not require root, or installation of any software on the remote host.
+An Ansible role that creates or renews a cert with https://letsencrypt.org/ and optionally installs it to servers. Does not require root, or installation of any software on the remote host(s).
 
 ## Requirements
 
@@ -9,9 +9,10 @@ You need to have `letsencrypt` installed in your *local* environment path, or se
 
 You need to have a proxy setup on your web host(s), something like:
 
+    {% set ansible_local_host = ansible_env.SSH_CONNECTION.split(' ')[0] -%}
     <IfModule mod_proxy.c>
-      ProxyPass "/.well-known/acme-challenge/" "http://{{letsencrypt.bind}}:{{letsencrypt_local_port}}/.well-known/acme-challenge/" retry=1
-      ProxyPassReverse "/.well-known/acme-challenge/" "http://{{letsencrypt.bind}}:{{letsencrypt_local_port}}/.well-known/acme-challenge/"
+      ProxyPass "/.well-known/acme-challenge/" "http://{{ansible_local_host}}:{{letsencrypt_local_port}}/.well-known/acme-challenge/" retry=1
+      ProxyPassReverse "/.well-known/acme-challenge/" "http://{{ansible_local_host}}:{{letsencrypt_local_port}}/.well-known/acme-challenge/"
 
       <Location "/.well-known/acme-challenge/">
         ProxyPreserveHost On
