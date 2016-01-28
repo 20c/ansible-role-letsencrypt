@@ -13,7 +13,6 @@
 - name: create or renew letsencrypt cert
   local_action: shell {{letsencrypt_command}}
     --text
-    --agree-dev-preview
     --agree-tos
     --standalone
     --renew-by-default

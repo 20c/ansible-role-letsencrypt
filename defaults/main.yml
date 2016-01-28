@@ -14,7 +14,7 @@ letsencrypt_force_install: True
 #    email: admin@example.net
 letsencrypt_command: letsencrypt
 letsencrypt_server: https://acme-v01.api.letsencrypt.org/directory
-letsencrypt_dir: letsencrypt
+letsencrypt_dir: gen/letsencrypt
 letsencrypt_config_dir: "{{letsencrypt_dir}}/config"
 letsencrypt_work_dir: "{{letsencrypt_dir}}/tmp"
 letsencrypt_logs_dir: "{{letsencrypt_dir}}/log"
