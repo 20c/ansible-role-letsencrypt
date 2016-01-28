@@ -19,5 +19,5 @@ letsencrypt_config_dir: "{{letsencrypt_dir}}/config"
 letsencrypt_work_dir: "{{letsencrypt_dir}}/tmp"
 letsencrypt_logs_dir: "{{letsencrypt_dir}}/log"
 # in seconds, default is 2 weeks
-letsencrypt_renew_at: 1209600
+letsencrypt_renew_at: 1814400
 letsencrypt_cert_file: fullchain.pem
