@@ -17,7 +17,7 @@
     --standalone
     --renew-by-default
     -d {{item.item.domain}}
-    {% if item.item.sans %}-d {{ item.item.sans | join(' -d ') }}{% endif %}
+    {% if item.item.sans | default(0) %}-d {{ item.item.sans | join(' -d ') }}{% endif %}
     --config-dir={{letsencrypt_config_dir}}
     --work-dir={{letsencrypt_work_dir}}
     --logs-dir={{letsencrypt_logs_dir}}
