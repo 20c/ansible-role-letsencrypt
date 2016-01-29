@@ -41,6 +41,16 @@
   tags:
     - letsencrypt
 
+- name: installing packages for sync
+  yum: state=present
+       name={{item}}
+  with_items:
+    - rsync
+  when: letsencrypt_install_dir is defined
+    and ansible_os_family == "RedHat"
+  tags:
+    - letsencrypt
+
 - name: push certs to server
   synchronize: src={{letsencrypt_config_dir}}/live/{{item.item.domain}}
     dest={{letsencrypt_install_dir}}
@@ -49,8 +59,9 @@
     perms=yes
     copy_links=yes
   with_items: letsencrypt_update.results
-  when: (item.changed or letsencrypt_force_install) and
-    letsencrypt_install_dir is defined
+  changed_when: true
+  when: letsencrypt_install_dir is defined
+    and (item.changed or letsencrypt_force_install)
   tags:
     - letsencrypt
 
