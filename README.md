@@ -1,13 +1,28 @@
 
 # Ansible Role for letsencrypt
 
-An Ansible role that creates or renews a cert with https://letsencrypt.org/ and optionally installs it to servers. Does not require root, or installation of any software on the remote host(s).
+An Ansible role that creates or renews a certificate with https://letsencrypt.org/ and optionally installs it to servers. Does not require root, stopping any processes, or installation of any software on the remote host(s).
+
+This method currently only supports HTTP/S validation, it uses a proxy from your public facing website (probably over a private management network) to avoid installing or running anything extra on production servers.
+
+Generated certificates will be put in `letsencrypt_dir` (default `gen/letsencrypt`), specifying `letsencrypt_install_dir` will make it also push to all hosts.
 
 ## Requirements
 
-You need to have `letsencrypt` installed in your *local* environment path, or set `letsencrypt_command`.
+You need to have `letsencrypt` installed in your *local* environment path, or set variable `letsencrypt_command`.
 
-You need to have a proxy setup on your web host(s), something like:
+To install either follow [their directions](http://letsencrypt.readthedocs.org/en/latest/using.html), or to install directly to the current venv (I wasn't able to get it to find the correct deps for a direct from git install, hopefully it'll work from pypi soon):
+
+    git clone https://github.com/letsencrypt/letsencrypt
+    cd letsencrypt
+    pip install -e ../c/gh/letsencrypt/
+    pip install -e ../c/gh/letsencrypt/acme/
+
+## Proxy Setup
+
+With ansible it's quite easy to configure a proxy from all your front end servers back to the deploy machine. Grab the address from the environment and apply where needed, some examples:
+
+#### Apache, from config file template
 
     {% set ansible_local_host = ansible_env.SSH_CONNECTION.split(' ')[0] -%}
     <IfModule mod_proxy.c>
@@ -22,6 +37,25 @@ You need to have a proxy setup on your web host(s), something like:
       </Location>
     </IfModule>
 
+#### Nginx, from config file template
+    {% set ansible_local_host = ansible_env.SSH_CONNECTION.split(' ')[0] -%}
+    server {
+       listen 80;
+       location /.well-known/acme-challenge/ {
+           proxy_pass http://{{ansible_local_host}}:{{letsencrypt_local_port}}/;
+           rewrite /(.*) /$1 break;
+       }
+    }
+
+#### Nginx, from ansible role [jdauphant.nginx](https://galaxy.ansible.com/jdauphant/nginx/)
+
+    nginx_sites:
+      redir80:
+        - listen 80
+        - "location /.well-known/acme-challenge/ {
+            proxy_pass http://{{ansible_env.SSH_CONNECTION.split(' ')[0]}}:{{letsencrypt_local_port}}/;
+            rewrite /(.*) /$1 break;
+            }"
 
 ## Role Variables
 
@@ -54,7 +88,7 @@ Default variables
 
     letsencrypt_server: https://acme-v01.api.letsencrypt.org/directory
     letsencrypt_command: letsencrypt
-    letsencrypt_dir: letsencrypt
+    letsencrypt_dir: gen/letsencrypt
     letsencrypt_config_dir: "{{letsencrypt_dir}}/config"
     letsencrypt_work_dir: "{{letsencrypt_dir}}/tmp"
     letsencrypt_logs_dir: "{{letsencrypt_dir}}/log"
@@ -73,6 +107,14 @@ Default variables
             - domain: example.net
               sans: [www.example.net, example.com, www.example.com]
               email: admin@unitedix.net
+
+## Maintenance
+
+Uses tag `letsencrypt` to only run these tasks, and will automatically renew if the certificate will expire in less than `letsencrypt_renew_at` seconds.
+
+So as an example command to keep your certs renewed from a nightly crontab would be:
+
+    ansible-playbook -i prod site.yml --tag=letsencrypt
 
 ## License
 
