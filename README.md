@@ -59,7 +59,7 @@ With ansible it's quite easy to configure a proxy from all your front end server
 
 ## Role Variables
 
-The only required variable is `letsencrypt_certs` which must be a list of dicts that contain at least `domain` and may also contain `san` as a lit of Subject Alternative Names for the cert, and email if you want to override the cert email.
+The only required variable is `letsencrypt_certs` which must be a list of dicts that contain at least `domain` and may also contain `san` as a list of Subject Alternative Names for the cert, and email if you want to override the cert email.
 
     letsencrypt_certs:
       - domain: example.net
@@ -70,6 +70,7 @@ The only required variable is `letsencrypt_certs` which must be a list of dicts 
         sans: [www.example.org]
 
 If you want it to install the certs you must set `letsencrypt_install_dir`.
+
     letsencrypt_install_dir: /srv/certs/
 
 Default variables
@@ -93,8 +94,8 @@ Default variables
     letsencrypt_work_dir: "{{letsencrypt_dir}}/tmp"
     letsencrypt_logs_dir: "{{letsencrypt_dir}}/log"
 
-    # renew the cert when expiration is within this number of seconds, default is 2 weeks
-    letsencrypt_renew_at: 1209600
+    # renew the cert when expiration is within this number of seconds, default is 21 days (email reminders come at 20 days)
+    letsencrypt_renew_at: 1814400
     letsencrypt_cert_file: fullchain.pem
 
 ## Example Playbook
@@ -106,7 +107,7 @@ Default variables
           letsencrypt_certs:
             - domain: example.net
               sans: [www.example.net, example.com, www.example.com]
-              email: admin@unitedix.net
+              email: admin@example.net
 
 ## Maintenance
 
