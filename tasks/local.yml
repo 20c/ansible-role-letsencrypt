@@ -7,6 +7,9 @@
   failed_when: False
   changed_when: "letsencrypt_update.rc != 0"
   always_run: yes
+  when: item.domain is defined
+  tags:
+    - letsencrypt
 
 #- debug: var=letsencrypt_update
 
@@ -31,13 +34,11 @@
   tags:
     - letsencrypt
 
-# tls-sni-01
-# --tls-sni-01-port={{letsencrypt_local_port}}
-
 - name: fix cert permissions
   local_action: shell chmod 0400 {{letsencrypt_config_dir}}/live/{{item.item.domain}}/*.pem
   with_items: letsencrypt_update.results
-  when: (item.changed or letsencrypt_force_install)
+  when: item.item is defined
+    and (item.changed or letsencrypt_force_install)
   tags:
     - letsencrypt
 
