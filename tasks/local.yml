@@ -62,6 +62,7 @@
   with_items: letsencrypt_update.results
   changed_when: true
   when: letsencrypt_install_dir is defined
+    and item.item.domain is defined
     and (item.changed or letsencrypt_force_install)
   tags:
     - letsencrypt
