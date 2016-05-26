@@ -2,7 +2,7 @@
 - name: check for valid cert
   local_action: shell openssl x509 -checkend {{letsencrypt_renew_at}} -noout -in {{letsencrypt_config_dir}}/live/{{item.domain}}/{{letsencrypt_cert_file}}
   register: letsencrypt_update
-  with_items: letsencrypt_certs
+  with_items: "{{letsencrypt_certs}}"
   ignore_errors: True
   failed_when: False
   changed_when: "letsencrypt_update.rc != 0"
@@ -29,7 +29,7 @@
     --standalone-supported-challenges=http-01
     --http-01-port={{letsencrypt_local_port}}
     certonly
-  with_items: letsencrypt_update.results
+  with_items: "{{letsencrypt_update.results}}"
   when: item.changed
   tags:
     - letsencrypt
