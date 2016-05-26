@@ -36,7 +36,7 @@
 
 - name: fix cert permissions
   local_action: shell chmod 0400 {{letsencrypt_config_dir}}/live/{{item.item.domain}}/*.pem
-  with_items: letsencrypt_update.results
+  with_items: "{{letsencrypt_update.results}}"
   when: item.item is defined
     and (item.changed or letsencrypt_force_install)
   tags:
@@ -59,7 +59,7 @@
     group=no
     perms=yes
     copy_links=yes
-  with_items: letsencrypt_update.results
+  with_items: "{{letsencrypt_update.results}}"
   changed_when: true
   when: letsencrypt_install_dir is defined
     and item.item.domain is defined
