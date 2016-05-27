@@ -9,7 +9,7 @@ Generated certificates will be put in `letsencrypt_dir` (default `gen/letsencryp
 
 ## Requirements
 
-You need to have `letsencrypt` installed in your *local* environment path, or set variable `letsencrypt_command`.
+You need to have `certbot` or `letsencrypt` installed in your *local* environment path, or set variable `letsencrypt_command`.
 
 To install either follow [their directions](http://letsencrypt.readthedocs.org/en/latest/using.html), or to install directly to the current venv (I wasn't able to get it to find the correct deps for a direct from git install, hopefully it'll work from pypi soon):
 
@@ -88,7 +88,7 @@ Default variables
     letsencrypt_force_install: True
 
     letsencrypt_server: https://acme-v01.api.letsencrypt.org/directory
-    letsencrypt_command: letsencrypt
+    # letsencrypt_command: letsencrypt
     letsencrypt_dir: gen/letsencrypt
     letsencrypt_config_dir: "{{letsencrypt_dir}}/config"
     letsencrypt_work_dir: "{{letsencrypt_dir}}/tmp"
