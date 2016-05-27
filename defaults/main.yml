@@ -12,7 +12,10 @@ letsencrypt_force_install: True
 # optional:
 #    sans: [www.example.net, example.com, www.example.com]
 #    email: admin@example.net
-letsencrypt_command: letsencrypt
+
+# the command use, otherwise tries certbot, then letsencrypt
+#letsencrypt_command: certbot
+
 letsencrypt_server: https://acme-v01.api.letsencrypt.org/directory
 letsencrypt_dir: gen/letsencrypt
 letsencrypt_config_dir: "{{letsencrypt_dir}}/config"

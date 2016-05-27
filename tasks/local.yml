@@ -1,4 +1,30 @@
 
+- name: check for certbot command
+  local_action: shell certbot --version
+  when: not letsencrypt_command | default
+  register: has_certbot
+  ignore_errors: True
+
+- name: setting letsencrypt_command to certbot
+  set_fact:
+    letsencrypt_command: certbot
+  when: has_certbot|succeeded
+
+- name: check for letsencrypt command
+  local_action: shell letsencrypt --version
+  when: has_certbot|failed
+  register: has_letsencrypt
+  ignore_errors: True
+
+- name: setting letsencrypt_command to letsencrypt
+  set_fact:
+    letsencrypt_command: letsencrypt
+  when: not has_letsencrypt|skipped and has_letsencrypt|succeeded
+
+- name: check for letsencrypt_command
+  fail: msg="failed to find a command to use, please set variable `letsencrypt_command` by hand"
+  when: not letsencrypt_command | default
+
 - name: check for valid cert
   local_action: shell openssl x509 -checkend {{letsencrypt_renew_at}} -noout -in {{letsencrypt_config_dir}}/live/{{item.domain}}/{{letsencrypt_cert_file}}
   register: letsencrypt_update
