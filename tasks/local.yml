@@ -8,7 +8,7 @@
 - name: setting letsencrypt_command to certbot
   set_fact:
     letsencrypt_command: certbot
-  when: has_certbot|succeeded
+  when: has_certbot|success
 
 - name: check for letsencrypt command
   local_action: shell letsencrypt --version
@@ -19,7 +19,7 @@
 - name: setting letsencrypt_command to letsencrypt
   set_fact:
     letsencrypt_command: letsencrypt
-  when: not has_letsencrypt|skipped and has_letsencrypt|succeeded
+  when: not has_letsencrypt|skipped and has_letsencrypt|success
 
 - name: check for letsencrypt_command
   fail: msg="failed to find a command to use, please set variable `letsencrypt_command` by hand"
