@@ -1,6 +1,6 @@
 
 - include: local.yml
-  when: letsencrypt_local
+  when: letsencrypt_certs is defined and letsencrypt_local
   tags:
     - letsencrypt
 
