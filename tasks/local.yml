@@ -4,6 +4,7 @@
   when: not letsencrypt_command | default
   register: has_certbot
   ignore_errors: True
+  changed_when: false
 
 - name: setting letsencrypt_command to certbot
   set_fact:
@@ -15,6 +16,7 @@
   when: has_certbot|failed
   register: has_letsencrypt
   ignore_errors: True
+  changed_when: false
 
 - name: setting letsencrypt_command to letsencrypt
   set_fact:
@@ -32,7 +34,7 @@
   ignore_errors: True
   failed_when: False
   changed_when: "letsencrypt_update.rc != 0"
-  always_run: yes
+  check_mode: no
   when: item.domain is defined
   tags:
     - letsencrypt
