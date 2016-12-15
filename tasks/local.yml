@@ -30,7 +30,7 @@
 - name: check for valid cert
   local_action: shell openssl x509 -checkend {{letsencrypt_renew_at}} -noout -in {{letsencrypt_config_dir}}/live/{{item.domain}}/{{letsencrypt_cert_file}}
   register: letsencrypt_update
-  with_items: "{{letsencrypt_certs}}"
+  with_items: "{{letsencrypt_certs | d({})}}"
   ignore_errors: True
   failed_when: False
   changed_when: "letsencrypt_update.rc != 0"
@@ -65,7 +65,7 @@
 - name: fix cert permissions
   local_action: shell chmod 0400 {{letsencrypt_config_dir}}/live/{{item.item.domain}}/*.pem
   with_items: "{{letsencrypt_update.results}}"
-  when: item.item is defined
+  when: item.item is defined and item.item.domain is defined
     and (item.changed or letsencrypt_force_install)
   tags:
     - letsencrypt
